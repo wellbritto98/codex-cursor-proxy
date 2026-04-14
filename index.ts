@@ -1,12 +1,14 @@
 #!/usr/bin/env bun
 import { mkdirSync, readFileSync, writeFileSync } from "fs";
 import localtunnel from "localtunnel";
+import { homedir } from "node:os";
 import { join } from "path";
 import { ulid } from "ulid";
 
 // ─── Config ──────────────────────────────────────────────────────────────────
-
-const HOME = process.env.HOME ?? "~";
+// Windows often has USERPROFILE but not HOME; never use "~" as a path segment
+// (join would treat it as a relative folder and create ./~ in the project).
+const HOME = process.env.HOME || homedir();
 const PORT = 3000;
 const API_URL = "https://chatgpt.com/backend-api/codex/responses";
 const AUTH_PATH = join(HOME, ".codex", "auth.json");
